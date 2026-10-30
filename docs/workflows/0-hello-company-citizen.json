@@ -1,0 +1,36 @@
+{
+  "name": "Hello Company Citizen (Create Customer)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "00000000-0000-4000-8000-000000000001",
+      "name": "When clicking Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "resource": "customer",
+        "operation": "create",
+        "email": "jane@example.com",
+        "additionalFields": {
+          "firstName": "Jane",
+          "status": "active"
+        }
+      },
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Create Customer",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [500, 300]
+    }
+  ],
+  "connections": {
+    "When clicking Test": {
+      "main": [[{ "node": "Create Customer", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

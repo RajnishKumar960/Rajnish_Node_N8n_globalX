@@ -1,0 +1,52 @@
+{
+  "name": "Company Citizen — New Employee → Create Record",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "44444444-0000-4000-8000-000000000001",
+      "name": "When clicking Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "resource": "employee",
+        "operation": "create",
+        "email": "new.hire@example.company.local",
+        "additionalFields": { "firstName": "Sam", "lastName": "Rivera", "department": "Support", "title": "Associate", "status": "active" }
+      },
+      "id": "44444444-0000-4000-8000-000000000002",
+      "name": "Create Employee",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "notification",
+        "operation": "sendEmail",
+        "to": "it-onboarding@example.company.local",
+        "subject": "New employee record created: {{ $json.firstName }} {{ $json.lastName }}",
+        "body": "Employee id {{ $json.id }} was created. Please provision accounts."
+      },
+      "id": "44444444-0000-4000-8000-000000000003",
+      "name": "Notify Onboarding",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [720, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking Test": { "main": [[{ "node": "Create Employee", "type": "main", "index": 0 }]] },
+    "Create Employee": { "main": [[{ "node": "Notify Onboarding", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

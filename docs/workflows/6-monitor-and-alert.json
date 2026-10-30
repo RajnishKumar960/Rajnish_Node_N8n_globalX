@@ -1,0 +1,77 @@
+{
+  "name": "Company Citizen — Scheduled Monitor → Identify → Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 1 }] }
+      },
+      "id": "66666666-0000-4000-8000-000000000001",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "resource": "lead",
+        "operation": "search",
+        "searchQuery": "",
+        "filtersJson": "{ \"status\": \"lost\" }",
+        "returnAll": true,
+        "pageSize": 100
+      },
+      "id": "66666666-0000-4000-8000-000000000002",
+      "name": "Find Records Needing Attention",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [430, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "version": 2 },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "exists" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "66666666-0000-4000-8000-000000000003",
+      "name": "Has A Match?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "resource": "notification",
+        "operation": "sendEmail",
+        "to": "ops-alerts@example.company.local",
+        "subject": "Attention: lead {{ $json.id }} marked lost",
+        "body": "Lead {{ $json.id }} ({{ $json.email }}) needs follow-up."
+      },
+      "id": "66666666-0000-4000-8000-000000000004",
+      "name": "Send Alert Email",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [900, 220],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    }
+  ],
+  "connections": {
+    "Every Hour": { "main": [[{ "node": "Find Records Needing Attention", "type": "main", "index": 0 }]] },
+    "Find Records Needing Attention": { "main": [[{ "node": "Has A Match?", "type": "main", "index": 0 }]] },
+    "Has A Match?": { "main": [[{ "node": "Send Alert Email", "type": "main", "index": 0 }], []] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

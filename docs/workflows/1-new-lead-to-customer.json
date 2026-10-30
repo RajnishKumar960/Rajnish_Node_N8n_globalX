@@ -1,0 +1,51 @@
+{
+  "name": "Company Citizen — New Lead → Create Customer",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "11111111-0000-4000-8000-000000000001",
+      "name": "When clicking Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "resource": "lead",
+        "operation": "create",
+        "email": "new.lead@example.com",
+        "additionalFields": { "name": "Jordan Example", "source": "website", "status": "new" }
+      },
+      "id": "11111111-0000-4000-8000-000000000002",
+      "name": "Create Lead",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "customer",
+        "operation": "create",
+        "email": "={{ $json.email }}",
+        "additionalFields": { "status": "prospect", "notes": "Converted from lead {{ $json.id }}" }
+      },
+      "id": "11111111-0000-4000-8000-000000000003",
+      "name": "Create Customer",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [720, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking Test": { "main": [[{ "node": "Create Lead", "type": "main", "index": 0 }]] },
+    "Create Lead": { "main": [[{ "node": "Create Customer", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

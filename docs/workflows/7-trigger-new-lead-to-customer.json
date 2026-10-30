@@ -1,0 +1,63 @@
+{
+  "name": "Company Citizen — On New Lead → Create Customer (complete loop)",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "lead",
+        "event": "created",
+        "maxItems": 50
+      },
+      "id": "77777777-0000-4000-8000-000000000001",
+      "name": "On New Lead",
+      "type": "n8n-nodes-company-citizen.companyCitizenTrigger",
+      "typeVersion": 1,
+      "position": [260, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "customer",
+        "operation": "create",
+        "email": "={{ $json.email }}",
+        "additionalFields": {
+          "firstName": "={{ ($json.name || '').split(' ')[0] }}",
+          "status": "prospect",
+          "notes": "={{ 'Auto-created from lead ' + $json.id }}"
+        }
+      },
+      "id": "77777777-0000-4000-8000-000000000002",
+      "name": "Create Customer",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [520, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "notification",
+        "operation": "sendEmail",
+        "to": "sales@example.company.local",
+        "subject": "={{ 'New customer created: ' + $json.email }}",
+        "body": "={{ 'Customer ' + $json.id + ' was auto-created from an incoming lead.' }}"
+      },
+      "id": "77777777-0000-4000-8000-000000000003",
+      "name": "Notify Sales",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [780, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    }
+  ],
+  "connections": {
+    "On New Lead": { "main": [[{ "node": "Create Customer", "type": "main", "index": 0 }]] },
+    "Create Customer": { "main": [[{ "node": "Notify Sales", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

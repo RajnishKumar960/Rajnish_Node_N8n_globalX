@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# Local development stack for n8n-nodes-company-citizen
+#
+#   - n8n             : self-hosted n8n that loads the custom node from ./dist
+#   - mock-company-api: in-memory stand-in for the company backend
+#
+# Prerequisite: build the node on the host first so ./dist exists:
+#     npm install
+#     npm run build
+#
+# Then from the repo root:
+#     docker compose -f docker/docker-compose.yml up
+#
+# Open n8n at http://localhost:5678
+# In the CompanyApi credential use (Development environment):
+#     Base URL : http://mock-company-api:8088   (from inside the n8n container)
+#     API Key  : dev-key-local
+#     Allow Insecure HTTP (Dev Only): ON
+# ---------------------------------------------------------------------------
+services:
+  n8n:
+    image: n8nio/n8n:latest # Pin to your target version in real use, e.g. n8nio/n8n:1.112.6
+    container_name: company-citizen-n8n
+    restart: unless-stopped
+    ports:
+      - '5678:5678'
+    environment:
+      # Load the custom node from the mounted, pre-built package directory.
+      - N8N_CUSTOM_EXTENSIONS=/home/node/custom-extensions
+      - N8N_SECURE_COOKIE=false
+      - N8N_RUNNERS_ENABLED=true
+      - GENERIC_TIMEZONE=Australia/Sydney
+      - N8N_LOG_LEVEL=info
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # Mount the repo root (contains package.json + built dist/) read-only.
+      - ..:/home/node/custom-extensions:ro
+    depends_on:
+      - mock-company-api
+
+  mock-company-api:
+    build:
+      context: ..
+      dockerfile: mock-server/Dockerfile
+    container_name: company-citizen-mock-api
+    restart: unless-stopped
+    ports:
+      - '8088:8088'
+    environment:
+      - MOCK_PORT=8088
+
+volumes:
+  n8n_data:

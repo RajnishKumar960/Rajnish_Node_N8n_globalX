@@ -1,0 +1,72 @@
+{
+  "name": "n8n-nodes-company-citizen",
+  "version": "0.1.0",
+  "description": "Enterprise n8n community node package that lets non-technical employees (citizen developers) automate the company's internal systems (Customer, Employee, Lead, Appointment, Document, Notification) without writing code.",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "citizen-developer",
+    "automation",
+    "crm",
+    "enterprise"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/RajnishKumar960/Rajnish_Node_N8n_globalX",
+  "author": {
+    "name": "Rajnish Kumar"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RajnishKumar960/Rajnish_Node_N8n_globalX.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf dist && tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials src --write",
+    "lint": "eslint \"nodes/**/*.ts\" \"credentials/**/*.ts\" \"src/**/*.ts\" package.json",
+    "lint:fix": "eslint \"nodes/**/*.ts\" \"credentials/**/*.ts\" \"src/**/*.ts\" package.json --fix",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --runInBand",
+    "mock-server": "ts-node mock-server/server.ts",
+    "prepublishOnly": "npm run build && npm run lint"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/CompanyApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/CompanyCitizen/CompanyCitizen.node.js",
+      "dist/nodes/CompanyCitizenTrigger/CompanyCitizenTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "express": "^4.19.2",
+    "gulp": "^5.0.0",
+    "jest": "^29.7.0",
+    "n8n-workflow": "^2.16.0",
+    "prettier": "^3.3.3",
+    "rimraf": "^5.0.7",
+    "ts-jest": "^29.2.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

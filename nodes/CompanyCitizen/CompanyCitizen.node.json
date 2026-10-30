@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-base.companyCitizen",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Sales", "Communication", "Utility"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/RajnishKumar960/Rajnish_Node_N8n_globalX/blob/master/docs/API_CONTRACT.md"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/RajnishKumar960/Rajnish_Node_N8n_globalX/blob/master/README.md"
+			}
+		]
+	}
+}

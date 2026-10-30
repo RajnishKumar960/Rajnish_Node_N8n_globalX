@@ -1,0 +1,52 @@
+{
+  "name": "Company Citizen — Appointment Booked → Update Internal System",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "22222222-0000-4000-8000-000000000001",
+      "name": "When clicking Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "resource": "appointment",
+        "operation": "create",
+        "title": "Discovery call",
+        "startTime": "={{ $now.plus({ days: 1 }).toISO() }}",
+        "additionalFields": { "customerId": "cus_1001", "location": "Zoom", "status": "scheduled" }
+      },
+      "id": "22222222-0000-4000-8000-000000000002",
+      "name": "Create Appointment",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "customer",
+        "operation": "update",
+        "recordId": "={{ $json.customerId || 'cus_1001' }}",
+        "updateFields": { "notes": "Appointment {{ $json.id }} booked for {{ $json.startTime }}" }
+      },
+      "id": "22222222-0000-4000-8000-000000000003",
+      "name": "Update Customer Record",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [720, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking Test": { "main": [[{ "node": "Create Appointment", "type": "main", "index": 0 }]] },
+    "Create Appointment": { "main": [[{ "node": "Update Customer Record", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

@@ -1,0 +1,52 @@
+{
+  "name": "Company Citizen — Customer Updated → Sync Another App",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "55555555-0000-4000-8000-000000000001",
+      "name": "When clicking Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "resource": "customer",
+        "operation": "update",
+        "recordId": "cus_1001",
+        "updateFields": { "company": "Acme Pty Ltd", "status": "active" }
+      },
+      "id": "55555555-0000-4000-8000-000000000002",
+      "name": "Update Customer",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [420, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://CONFIRM-other-app.example.local/api/sync/customer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "55555555-0000-4000-8000-000000000003",
+      "name": "Sync To Other App (HTTP)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 300],
+      "notesInFlow": true,
+      "notes": "Placeholder: replace URL + auth with the real downstream app. CONFIRM."
+    }
+  ],
+  "connections": {
+    "When clicking Test": { "main": [[{ "node": "Update Customer", "type": "main", "index": 0 }]] },
+    "Update Customer": { "main": [[{ "node": "Sync To Other App (HTTP)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

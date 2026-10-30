@@ -1,0 +1,53 @@
+{
+  "name": "Company Citizen — Document Uploaded → Notify",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "33333333-0000-4000-8000-000000000001",
+      "name": "When clicking Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "operation": "upload",
+        "name": "contract-acme-2026.pdf",
+        "storageRef": "s3://company-docs/contracts/acme-2026.pdf",
+        "additionalFields": { "contentType": "application/pdf", "customerId": "cus_1001" }
+      },
+      "id": "33333333-0000-4000-8000-000000000002",
+      "name": "Register Document",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "notification",
+        "operation": "sendNotification",
+        "recipientId": "team-sales",
+        "message": "New document uploaded: {{ $json.name }} (id {{ $json.id }})",
+        "notificationOptions": { "title": "Document uploaded", "priority": "normal", "channel": "slack" }
+      },
+      "id": "33333333-0000-4000-8000-000000000003",
+      "name": "Send Notification",
+      "type": "n8n-nodes-company-citizen.companyCitizen",
+      "typeVersion": 1,
+      "position": [720, 300],
+      "credentials": {
+        "companyApi": { "id": "REPLACE_WITH_CREDENTIAL_ID", "name": "Company API – Dev" }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking Test": { "main": [[{ "node": "Register Document", "type": "main", "index": 0 }]] },
+    "Register Document": { "main": [[{ "node": "Send Notification", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}
